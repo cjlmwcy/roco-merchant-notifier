@@ -34,6 +34,5 @@ jobs:
         env:
           ROCOM_API_KEY: ${{ secrets.ROCOM_API_KEY }}
           IMGBB_KEY: ${{ secrets.IMGBB_KEY }}
-          NOTIFYME_UUID: ${{ secrets.NOTIFYME_UUID }}
-          BARK_KEY: ${{ secrets.BARK_KEY }}
+          FEISHU_WEBHOOK: ${{ secrets.FEISHU_WEBHOOK }}
         run: python main.py

@@ -8,11 +8,9 @@ from playwright.async_api import async_playwright
 # ================= 1. 配置区域 =================
 ROCOM_API_KEY = os.environ.get("ROCOM_API_KEY")
 IMGBB_KEY = os.environ.get("IMGBB_KEY")
-NOTIFYME_UUID = os.environ.get("NOTIFYME_UUID")
-BARK_KEY = os.environ.get("BARK_KEY")
+FEISHU_WEBHOOK = os.environ.get("FEISHU_WEBHOOK")
 
 GAME_API_URL = "https://wegame.shallow.ink/api/v1/games/rocom/merchant/info"
-NOTIFYME_SERVER = "https://notifyme-server.wzn556.top/api/send"
 ASSETS_DIR = os.path.abspath("assets/yuanxing-shangren")
 HTML_TEMPLATE_FILE = "index.html"
 TEMP_RENDER_FILE = "temp_render.html"
@@ -243,29 +241,43 @@ async def upload_to_imgbb(image_path):
 # ================= 4. 推送分发 =================
 
 def push_all(title, body, markdown, image_url):
-    """执行双通道推送"""
-    if NOTIFYME_UUID:
-        payload = {
-            "data": {
-                "uuid": NOTIFYME_UUID, "ttl": 86400, "priority": "high",
-                "data": {
-                    "title": title, "body": body, "group": "洛克王国", "bigText": True, "record": 1,
-                    "markdown": f"{markdown}\n\n![render]({image_url})" if image_url else markdown
+    """推送到飞书自定义机器人"""
+    if not FEISHU_WEBHOOK:
+        print("⚠️ 未配置 FEISHU_WEBHOOK，跳过推送")
+        return
+
+    content = body
+    if image_url:
+        content += f"\n\n[查看商品详情图片]({image_url})"
+
+    payload = {
+        "msg_type": "interactive",
+        "card": {
+            "header": {
+                "title": {
+                    "tag": "plain_text",
+                    "content": title
+                },
+                "template": "orange"
+            },
+            "elements": [
+                {
+                    "tag": "markdown",
+                    "content": content
                 }
-            }
+            ]
         }
-        try:
-            requests.post(NOTIFYME_SERVER, json=payload, timeout=10)
-            print("✅ NotifyMe 推送已发送")
-        except: pass
-    
-    if BARK_KEY:
-        try:
-            requests.post(f"https://api.day.app/{BARK_KEY}", data={
-                "title": title, "body": body, "group": "洛克王国", "image": image_url, "isArchive": 1
-            }, timeout=10)
-            print("✅ Bark 推送已发送")
-        except: pass
+    }
+
+    try:
+        resp = requests.post(FEISHU_WEBHOOK, json=payload, timeout=10)
+        result = resp.json()
+        if result.get("code") == 0:
+            print("✅ 飞书推送已发送")
+        else:
+            print(f"❌ 飞书推送失败: {result.get('msg')}")
+    except Exception as e:
+        print(f"❌ 飞书推送异常: {e}")
 
 # ================= 5. 主入口 =================
 
