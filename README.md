@@ -7,9 +7,7 @@
 * **精准过滤**：内置北京时间校准，自动计算当前商人轮次（1-4轮）与倒计时，彻底过滤上一轮过期商品。
 * **完美 UI 渲染**：结合 `Jinja2` 模板引擎与 `Playwright` 无头浏览器，直接读取本地字体和背景图，实现与原版完全一致的极致视觉效果。
 * **极速图床托管**：集成 ImgBB API，自动将高质量截图转化为网络链接，减轻推送通道压力。
-* **双通道推送**：
-  * 🍏 **iOS**: 通过 [Bark](https://github.com/Finb/Bark) 实现带大图的系统级通知。
-  * 🤖 **Android**: 通过 [NotifyMe](https://notifyme.wzn556.top/)  实现高优先级通知推送。
+* **飞书推送**：通过飞书自定义机器人 Webhook，以卡片消息形式推送商品刷新通知。
 * **防拥堵机制**：GitHub Actions 定时任务设置“提前 5 分钟”排队策略，有效对抗官方节点延迟。
 
 ### 📸 效果预览
@@ -32,16 +30,13 @@
 项目主页：[Entropy-Increase-Team/astrbot_plugin_rocom](https://github.com/Entropy-Increase-Team/astrbot_plugin_rocom)
 
 #### 3. 配置 GitHub Secrets (核心步骤)
-进入你的 GitHub 仓库 -> `Settings` -> `Secrets and variables` -> `Actions`，点击 `New repository secret`，依次添加以下 **4 个环境变量**：
+进入你的 GitHub 仓库 -> `Settings` -> `Secrets and variables` -> `Actions`，点击 `New repository secret`，依次添加以下 **3 个环境变量**：
 
 | Secret 名称 | 必填 | 说明 | 获取方式 |
 | :--- | :---: | :--- | :--- |
 | `ROCOM_API_KEY` | ✅ | 游戏数据接口访问凭证 | [社区网关](https://github.com/Entropy-Increase-Team/astrbot_plugin_rocom)提供 |
 | `IMGBB_KEY` | ✅ | 图床上传 API Key | 注册 [ImgBB](https://api.imgbb.com/) 获取 |
-| `BARK_KEY` | 选填 | iOS 推送 Key | Bark App 内复制 |
-| `NOTIFYME_UUID` | 选填 | Android 推送 UUID | NotifyMe App 内获取 |
-
-*(注：`BARK_KEY` 和 `NOTIFYME_UUID` 至少填入一个即可接收通知，未填写的通道脚本会自动跳过，不会报错。)*
+| `FEISHU_WEBHOOK` | ✅ | 飞书自定义机器人 Webhook 地址 | 飞书群设置 -> 群机器人 -> 添加自定义机器人 -> 复制 Webhook 地址 |
 
 #### 4. 开启 GitHub Actions
 点击仓库上方的 `Actions` 选项卡，确保它已启用（点击 `I understand my workflows, go ahead and enable them`）。
