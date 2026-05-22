@@ -246,7 +246,7 @@ def push_all(title, body, markdown, image_url):
         print("⚠️ 未配置 FEISHU_WEBHOOK，跳过推送")
         return
 
-    ALERT_KEYWORDS = ("棱镜球", "国王球", "炫彩", "祝福项坠")
+    ALERT_KEYWORDS = ("棱镜球", "国王球", "炫彩", "祝福项坠", "魔力")
     content = body
     if any(kw in body for kw in ALERT_KEYWORDS):
         content += "\n\n<at id=all></at>"
