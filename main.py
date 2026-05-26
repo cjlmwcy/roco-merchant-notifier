@@ -247,9 +247,13 @@ def push_all(title, body, markdown, image_url):
         return
 
     ALERT_KEYWORDS = ("棱镜球", "国王球", "炫彩", "祝福项坠")
-    content = body
-    if any(kw in body for kw in ALERT_KEYWORDS):
-        content += "\n\n<at id=all></at>"
+    has_alert = any(kw in body for kw in ALERT_KEYWORDS)
+
+    if not has_alert:
+        print("⏭️ 无关键商品，跳过推送")
+        return
+
+    content = body + "\n\n<at id=all></at>"
     if image_url:
         content += f"\n\n[查看商品详情图片]({image_url})"
 
@@ -304,7 +308,7 @@ async def main():
     local_img = await render_to_image(processed)
     img_url = await upload_to_imgbb(local_img)
     
-    push_all("📢 远行商人已刷新", push_body, "### 🛒 商人刷新详情", img_url)
+    push_all("📢 远行商人上新硬货", push_body, "### 🛒 商人刷新详情", img_url)
 
 if __name__ == "__main__":
     asyncio.run(main())
