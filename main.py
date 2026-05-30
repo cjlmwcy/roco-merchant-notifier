@@ -245,10 +245,9 @@ def push_all(title, body, markdown, image_url):
     if not FEISHU_WEBHOOK:
         print("⚠️ 未配置 FEISHU_WEBHOOK，跳过推送")
         return
-
+    print(f"⏭️ 商品信息: {body}")
     ALERT_KEYWORDS = ("棱镜球", "国王球", "炫彩精灵蛋", "炫彩蛋", "祝福项坠")
     has_alert = any(kw in body for kw in ALERT_KEYWORDS)
-
     if not has_alert:
         print("⏭️ 无关键商品，跳过推送")
         return
